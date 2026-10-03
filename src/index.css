@@ -1,8 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
   color-scheme: light;
@@ -11,10 +10,15 @@
   color-scheme: dark;
 }
 
-/* ANIMASI GLOBAL: Mengubah warna perlahan (500ms) */
+/* ANIMASI GLOBAL: Mengubah warna perlahan agar transisi dark/light mode smooth di semua elemen */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  @apply transition-colors duration-500 ease-in-out;
   margin: 0;
   padding: 0;
 }

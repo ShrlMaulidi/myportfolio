@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { galleryPhotos } from '../../data';
 import { useLanguage } from '../../context/LanguageContext';
+import { Helmet } from 'react-helmet-async';
+import { useApi } from '../../hooks/useApi';
+import ReactionWidget from '../UI/ReactionWidget';
 
 export default function Gallery({ isDark }) {
   const { lang } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const { data: galleryPhotos, loading, updateData: updateGalleryPhotos } = useApi('galleries');
 
   useEffect(() => {
     if (selectedImage) {
@@ -34,19 +38,23 @@ export default function Gallery({ isDark }) {
     : galleryPhotos.filter(photo => photo.category === selectedCategory);
 
   return (
-    <div className="mb-10 animate-fade-in-up transition-colors duration-500 ease-in-out">
+    <div className="mb-10 animate-fade-in-up transition-colors duration-300 ease-in-out">
+        <Helmet>
+            <title>{lang === 'en' ? 'Gallery | Sahrul Maulidi' : 'Galeri | Sahrul Maulidi'}</title>
+            <meta name="description" content={lang === 'en' ? 'Photo gallery and moments.' : 'Galeri foto dan momen-momen.'} />
+        </Helmet>
         
         <div className="mb-8">
-             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {lang === 'en' ? 'Gallery' : 'Galeri'}
             </h1>
-            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-500 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
                 {lang === 'en' 
                     ? 'A collection of my moments, activities, and visual memories.' 
                     : 'Koleksi momen, kegiatan, dan kenangan visual saya.'}
             </p>
         </div>
-        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-500 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
+        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-300 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
 
         <div className="flex flex-wrap gap-2 mb-8">
             {categories.map((cat, idx) => (
@@ -77,10 +85,21 @@ export default function Gallery({ isDark }) {
                         className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                        <p className="text-white text-sm font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <p className="text-white text-sm font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 mb-2">
                             {lang === 'en' && photo.captionEn ? photo.captionEn : photo.caption}
                         </p>
+                        <div onClick={e => e.stopPropagation()}>
+                            <ReactionWidget 
+                                type="gallery" 
+                                itemId={photo.id} 
+                                reactions={photo.reactions} 
+                                isDark={true} 
+                                onReactUpdate={(id, newReactions) => {
+                                    updateGalleryPhotos(galleryPhotos.map(p => p.id === id ? { ...p, reactions: newReactions } : p));
+                                }} 
+                            />
+                        </div>
                     </div>
                 </div>
             ))}

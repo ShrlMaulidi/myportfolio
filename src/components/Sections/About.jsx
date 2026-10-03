@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { profileData, educationData, careerHistory } from "../../data";
 import { useLanguage } from "../../context/LanguageContext";
+import { Helmet } from "react-helmet-async";
+import { useApi } from "../../hooks/useApi";
 
 function CareerCard({ job, isDark, lang }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +10,7 @@ function CareerCard({ job, isDark, lang }) {
   const displayResponsibilities = lang === 'en' && job.responsibilitiesEn ? job.responsibilitiesEn : job.responsibilities;
 
   return (
-    <div className={`border rounded-2xl p-5 mb-4 transition-all duration-500 ease-in-out hover:border-opacity-80
+    <div className={`border rounded-2xl p-5 mb-4 transition-all duration-300 ease-in-out hover:border-opacity-80
         ${isDark ? 'border-[#27272a] bg-transparent hover:border-[#3f3f46]' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
       
       <div className="flex gap-4 items-start">
@@ -21,15 +22,15 @@ function CareerCard({ job, isDark, lang }) {
         </div>
 
         <div className="flex-1 min-w-0">
-            <h3 className={`text-base md:text-lg font-bold leading-tight mb-1 transition-colors duration-500 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-base md:text-lg font-bold leading-tight mb-1 transition-colors duration-300 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               {job.role}
             </h3>
 
-            <p className={`text-sm mb-2 transition-colors duration-500 ${isDark ? 'text-[#a1a1aa]' : 'text-gray-600'}`}>
+            <p className={`text-sm mb-2 transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-gray-600'}`}>
               {job.company} • <span className={`${isDark ? 'text-[#71717a]' : 'text-gray-500'}`}>{job.location}</span>
             </p>
 
-            <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm mb-4 transition-colors duration-500 ${isDark ? 'text-[#71717a]' : 'text-gray-500'}`}>
+            <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm mb-4 transition-colors duration-300 ${isDark ? 'text-[#71717a]' : 'text-gray-500'}`}>
                 <span>{job.period}</span>
                 <span className="w-1 h-1 rounded-full bg-current opacity-50"></span>
                 <span>{job.duration}</span>
@@ -58,7 +59,7 @@ function CareerCard({ job, isDark, lang }) {
 
             <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                 <div className="overflow-hidden">
-                    <ul className={`list-disc pl-5 space-y-1.5 text-sm md:text-[15px] leading-relaxed transition-colors duration-500 ${isDark ? 'text-[#a1a1aa] marker:text-[#52525b]' : 'text-gray-600 marker:text-gray-400'}`}>
+                    <ul className={`list-disc pl-5 space-y-1.5 text-sm md:text-[15px] leading-relaxed transition-colors duration-300 ${isDark ? 'text-[#a1a1aa] marker:text-[#52525b]' : 'text-gray-600 marker:text-gray-400'}`}>
                         {displayResponsibilities.map((task, idx) => (
                             <li key={idx}>{task}</li>
                         ))}
@@ -74,26 +75,33 @@ function CareerCard({ job, isDark, lang }) {
 
 export default function About({ isDark }) {
   const { lang } = useLanguage();
+  const { data: profileData } = useApi('profiles', null);
+  const { data: careerHistory = [] } = useApi('careers');
+  const { data: educationData = [] } = useApi('education');
 
   return (
-    <div className="animate-fade-in-up transition-colors duration-500 ease-in-out">
+    <div className="animate-fade-in-up transition-colors duration-300 ease-in-out">
+      <Helmet>
+        <title>{lang === 'en' ? 'About | Sahrul Maulidi' : 'Tentang | Sahrul Maulidi'}</title>
+        <meta name="description" content={lang === 'en' ? 'Learn more about Sahrul Maulidi, education, and career history.' : 'Pelajari lebih lanjut tentang Sahrul Maulidi, pendidikan, dan riwayat karier.'} />
+      </Helmet>
     
       <div className="mb-6">
-        <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-500 ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+        <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-300 ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
           {lang === 'en' ? 'About' : 'Tentang'}
         </h1>
-        <p className={`text-base md:text-lg transition-colors duration-500 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+        <p className={`text-base md:text-lg transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
           {lang === 'en' ? 'A brief introduction about who I am.' : 'Perkenalan singkat tentang siapa saya.'}
         </p>
       </div>
 
-      <div className={`w-full border-t border-dashed my-8 transition-colors duration-500 ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
+      <div className={`w-full border-t border-dashed my-8 transition-colors duration-300 ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
       
-      <div className={`prose max-w-none text-base md:text-lg leading-relaxed space-y-6 transition-colors duration-500 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+      <div className={`prose max-w-none text-base md:text-lg leading-relaxed space-y-6 transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
         {lang === 'en' ? (
           <>
             <p>
-              Hello! Thank you for visiting my personal website. I am <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{profileData.name}</span>, 
+              Hello! Thank you for visiting my personal website. I am <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{profileData?.name}</span>, 
               an Informatics student at <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Horizon University Indonesia</span>. 
               I am a Web Developer with a strong interest in building impactful software products. 
               My tech stack includes modern frontend technologies such as <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>React.js, Tailwind CSS</span>, 
@@ -108,7 +116,7 @@ export default function About({ isDark }) {
         ) : (
           <>
             <p>
-              Halo! Terima kasih telah mengunjungi situs pribadi saya. Saya <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{profileData.name}</span>, 
+              Halo! Terima kasih telah mengunjungi situs pribadi saya. Saya <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{profileData?.name}</span>, 
               seorang mahasiswa Informatika di <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Horizon University Indonesia</span>. 
               Saya adalah seorang Web Developer dengan minat besar dalam membangun produk perangkat lunak yang berdampak. 
               Stack teknologi saya meliputi teknologi frontend modern seperti <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>React.js, Tailwind CSS</span>, 
@@ -130,18 +138,18 @@ export default function About({ isDark }) {
         </div>
       </div>
 
-      <div className={`w-full h-px my-12 transition-colors duration-500 ${isDark ? 'bg-[#27272a]' : 'bg-gray-200'}`}></div>
+      <div className={`w-full h-px my-12 transition-colors duration-300 ${isDark ? 'bg-[#27272a]' : 'bg-gray-200'}`}></div>
 
       <div className="flex flex-col">
           <div className="flex items-center gap-3 mb-6">
-            <svg className={`w-6 h-6 transition-colors duration-500 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-6 h-6 transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
             <div className="flex flex-col">
-                <h2 className={`text-2xl md:text-3xl font-bold transition-colors duration-500 ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+                <h2 className={`text-2xl md:text-3xl font-bold transition-colors duration-300 ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                     {lang === 'en' ? 'Career' : 'Karier'}
                 </h2>
-                <p className={`text-sm md:text-base mt-1 transition-colors duration-500 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+                <p className={`text-sm md:text-base mt-1 transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
                     {lang === 'en' ? 'My professional journey.' : 'Perjalanan profesional saya.'}
                 </p>
             </div>
@@ -176,7 +184,7 @@ export default function About({ isDark }) {
       </div>
       </div>
 
-      <div className={`w-full border-t border-dashed my-12 transition-colors duration-500 ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
+      <div className={`w-full border-t border-dashed my-12 transition-colors duration-300 ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
 
       <div>
             <h2 className={`text-xl font-bold mb-8 flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>

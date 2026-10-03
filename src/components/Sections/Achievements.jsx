@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { achievementsData } from '../../data';
 import { useLanguage } from '../../context/LanguageContext';
+import { Helmet } from 'react-helmet-async';
+import { useApi } from '../../hooks/useApi';
 
 export default function Achievements({ isDark }) {
   const { lang } = useLanguage();
   const [search, setSearch] = useState('');
   const [selectedCert, setSelectedCert] = useState(null);
+
+  const { data: achievementsData } = useApi('achievements');
 
   useEffect(() => {
     if (selectedCert) {
@@ -26,19 +29,23 @@ export default function Achievements({ isDark }) {
   });
 
   return (
-    <div className="mb-10 animate-fade-in-up transition-colors duration-500 ease-in-out">
+    <div className="mb-10 animate-fade-in-up transition-colors duration-300 ease-in-out">
+        <Helmet>
+            <title>{lang === 'en' ? 'Achievements | Sahrul Maulidi' : 'Pencapaian | Sahrul Maulidi'}</title>
+            <meta name="description" content={lang === 'en' ? 'Certifications and achievements of Sahrul Maulidi.' : 'Sertifikasi dan pencapaian Sahrul Maulidi.'} />
+        </Helmet>
         
         <div className="mb-8">
-             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {lang === 'en' ? 'Achievements' : 'Pencapaian'}
             </h1>
-            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-500 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
                 {lang === 'en' 
                     ? 'A collection of certificates and badges I have earned throughout my professional and academic journey.' 
                     : 'Kumpulan sertifikat dan badge yang saya peroleh sepanjang perjalanan profesional dan akademik.'}
             </p>
         </div>
-        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-500 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
+        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-300 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
             <div className="relative w-full md:w-1/3">
@@ -84,7 +91,7 @@ export default function Achievements({ isDark }) {
                         <img 
                             src={item.image} 
                             alt={lang === 'en' && item.titleEn ? item.titleEn : item.title} 
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                     </div>

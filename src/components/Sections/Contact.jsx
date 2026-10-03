@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { socialMediaData } from '../../data';
 import emailjs from '@emailjs/browser'; 
+import toast from 'react-hot-toast';
 import { useLanguage } from '../../context/LanguageContext';
+import { Helmet } from 'react-helmet-async';
+import { useApi } from '../../hooks/useApi';
 
 const Icons = {
   Gmail: ({ className }) => (
@@ -32,7 +34,14 @@ const Icons = {
 };
 
 export default function Contact({ isDark }) {
+  // Safelist for Tailwind JIT (API colors):
+  // bg-gradient-to-br from-[#d94838] to-[#99251a]
+  // bg-gradient-to-br from-[#8a3ab9] via-[#e95950] to-[#fccc63]
+  // bg-gradient-to-br from-[#0077b5] to-[#004182]
+  // bg-gradient-to-br from-[#1f1f1f] to-[#000000]
+  // bg-gradient-to-br from-[#171515] to-[#0d1117]
   const { lang } = useLanguage();
+  const { data: socialMediaData = [] } = useApi('social-media');
   const form = useRef();
   const [isSending, setIsSending] = useState(false);
 
@@ -47,32 +56,36 @@ export default function Contact({ isDark }) {
     emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current, PUBLIC_KEY)
       .then((result) => {
           console.log(result.text);
-          alert(lang === 'en' ? 'Message sent successfully! Thank you.' : 'Pesan berhasil terkirim! Terima kasih.');
+          toast.success(lang === 'en' ? 'Message sent successfully! Thank you.' : 'Pesan berhasil terkirim! Terima kasih.');
           setIsSending(false);
           e.target.reset();
       }, (error) => {
           console.log(error.text);
-          alert(lang === 'en' ? 'Failed to send message. Please try again or contact via Email directly.' : 'Gagal mengirim pesan. Silakan coba lagi atau hubungi via Email langsung.');
+          toast.error(lang === 'en' ? 'Failed to send message. Please try again.' : 'Gagal mengirim pesan. Silakan coba lagi.');
           setIsSending(false);
       });
   };
 
   return (
-    <div className="mb-10 animate-fade-in-up transition-colors duration-500 ease-in-out">
+    <div className="mb-10 animate-fade-in-up transition-colors duration-300 ease-in-out">
+        <Helmet>
+            <title>{lang === 'en' ? 'Contact | Sahrul Maulidi' : 'Kontak | Sahrul Maulidi'}</title>
+            <meta name="description" content={lang === 'en' ? 'Get in touch with Sahrul Maulidi.' : 'Hubungi Sahrul Maulidi.'} />
+        </Helmet>
 
         <div className="mb-8">
-             <h1 className={`text-3xl md:text-4xl font-bold mb-2 tracking-tight transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+             <h1 className={`text-3xl md:text-4xl font-bold mb-2 tracking-tight transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {lang === 'en' ? 'Contact' : 'Kontak'}
             </h1>
-            <p className={`text-base md:text-lg transition-colors duration-500 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+            <p className={`text-base md:text-lg transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
                 {lang === 'en' ? 'Let\'s connect' : 'Mari kita terhubung'}
             </p>
         </div>
 
-        <div className={`h-px w-full my-8 border-dashed transition-colors duration-500 ease-in-out ${isDark ? 'bg-[#27272a]' : 'bg-gray-200'}`}></div>
+        <div className={`h-px w-full my-8 border-dashed transition-colors duration-300 ease-in-out ${isDark ? 'bg-[#27272a]' : 'bg-gray-200'}`}></div>
 
         <div className="mb-6">
-            <h2 className={`text-lg font-medium transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+            <h2 className={`text-lg font-medium transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {lang === 'en' ? 'Find me on social media' : 'Temukan saya di media sosial'}
             </h2>
         </div>
@@ -86,12 +99,16 @@ export default function Contact({ isDark }) {
                         key={idx} 
                         className={`
                             relative overflow-hidden rounded-3xl p-6 md:p-8 flex flex-col justify-between group
-                            ${card.color} ${card.span}
+                            ${card.span}
                             shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1
+                            ${isDark ? 'bg-[#18181b] border border-[#27272a]' : 'bg-white border border-gray-200'}
                         `}
                     >
+                        {/* Background color layer */}
+                        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0 ${card.color}`}></div>
+
                         {IconComponent && (
-                            <div className="absolute -top-16 -left-16 z-0 pointer-events-none transform rotate-12 opacity-5 text-white">
+                            <div className={`absolute -top-16 -left-16 z-0 pointer-events-none transform rotate-12 opacity-5 transition-colors duration-300 group-hover:text-white ${isDark ? 'text-white' : 'text-black'}`}>
                                 <IconComponent className="w-96 h-96" />
                             </div>
                         )}
@@ -100,7 +117,7 @@ export default function Contact({ isDark }) {
                           <img 
                             src="/kontak/back.png" 
                             alt="Background Pattern" 
-                            className="absolute inset-0 w-full h-full object-cover z-0 opacity-40 mix-blend-overlay pointer-events-none"
+                            className="absolute inset-0 w-full h-full object-cover z-0 opacity-0 group-hover:opacity-40 mix-blend-overlay pointer-events-none transition-opacity duration-500"
                           />
                         )}
 
@@ -108,10 +125,10 @@ export default function Contact({ isDark }) {
                         <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none z-0"></div>
 
                         <div className="relative z-10">
-                            <h3 className="text-xl md:text-2xl font-bold text-white mb-2 tracking-tight">
+                            <h3 className={`text-xl md:text-2xl font-bold mb-2 tracking-tight transition-colors duration-300 group-hover:text-white ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                                 {lang === 'en' && card.titleEn ? card.titleEn : card.title}
                             </h3>
-                            <p className="text-white/80 text-sm md:text-base font-medium mb-8 max-w-sm leading-relaxed">
+                            <p className={`text-sm md:text-base font-medium mb-8 max-w-sm leading-relaxed transition-colors duration-300 group-hover:text-white/90 ${isDark ? 'text-zinc-400' : 'text-gray-500'}`}>
                                 {lang === 'en' && card.descEn ? card.descEn : card.desc}
                             </p>
                             
@@ -119,16 +136,20 @@ export default function Contact({ isDark }) {
                                 href={card.url} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="inline-flex bg-white text-black px-5 py-2.5 rounded-lg text-sm font-bold items-center gap-2 hover:bg-gray-100 transition-colors shadow-sm cursor-pointer"
+                                className={`inline-flex px-5 py-2.5 rounded-lg text-sm font-bold items-center gap-2 transition-all duration-300 shadow-sm cursor-pointer
+                                    ${isDark 
+                                        ? 'bg-[#27272a] text-white hover:bg-[#3f3f46] group-hover:bg-white group-hover:text-black group-hover:hover:bg-gray-100' 
+                                        : 'bg-black text-white hover:bg-gray-800 group-hover:bg-white group-hover:text-black group-hover:hover:bg-gray-100'}
+                                `}
                             >
                                 {lang === 'en' && card.btnTextEn ? card.btnTextEn : card.btnText}
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             </a>
                         </div>
 
-                        <div className="absolute bottom-6 right-6 opacity-90 transform group-hover:scale-110 transition-transform duration-500 drop-shadow-lg z-10">
-                            <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
-                                {IconComponent ? <IconComponent className="w-10 h-10 md:w-12 md:h-12 text-white" /> : null}
+                        <div className="absolute bottom-6 right-6 opacity-90 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-lg z-10">
+                            <div className={`p-3 rounded-2xl backdrop-blur-sm border transition-all duration-300 group-hover:bg-white/20 group-hover:border-white/30 ${isDark ? 'bg-[#27272a] border-[#3f3f46]' : 'bg-gray-100 border-gray-200'}`}>
+                                {IconComponent ? <IconComponent className={`w-10 h-10 md:w-12 md:h-12 transition-colors duration-300 group-hover:text-white ${isDark ? 'text-white' : 'text-black'}`} /> : null}
                             </div>
                         </div>
 
@@ -137,10 +158,10 @@ export default function Contact({ isDark }) {
             })}
         </div>
 
-        <div className={`h-px w-full my-10 border-dashed transition-colors duration-500 ease-in-out ${isDark ? 'bg-[#27272a]' : 'bg-gray-200'}`}></div>
+        <div className={`h-px w-full my-10 border-dashed transition-colors duration-300 ease-in-out ${isDark ? 'bg-[#27272a]' : 'bg-gray-200'}`}></div>
 
         <div className="mb-6">
-            <h2 className={`text-lg font-medium mb-6 transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+            <h2 className={`text-lg font-medium mb-6 transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {lang === 'en' ? 'Or send me a message' : 'Atau kirim saya pesan'}
             </h2>
 

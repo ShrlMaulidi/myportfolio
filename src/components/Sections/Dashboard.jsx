@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { dashboardData } from '../../data';
+import { Helmet } from 'react-helmet-async';
+import { useApi } from '../../hooks/useApi';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function Dashboard({ isDark }) {
   const { lang } = useLanguage();
-  const { availability, topLanguages, tools, learningGoals } = dashboardData;
+  const { data: profile } = useApi('profiles', null);
+  const { data: topLanguages = [] } = useApi('top-languages');
+  const { data: tools = [] } = useApi('tools');
+  const { data: learningGoals = [] } = useApi('learning-goals');
   
+  const availability = profile ? {
+    isAvailable: profile.isAvailable,
+    status: profile.avail_status,
+    statusEn: profile.avail_statusEn,
+    description: profile.avail_desc,
+    descriptionEn: profile.avail_descEn,
+    link: profile.avail_link
+  } : {};
   const [githubData, setGithubData] = useState({
     public_repos: 0,
     followers: 0,
@@ -63,12 +75,17 @@ export default function Dashboard({ isDark }) {
   ];
 
   return (
-    <div className="mb-10 animate-fade-in-up transition-colors duration-500 ease-in-out">
+    <div className="mb-10 animate-fade-in-up transition-colors duration-300 ease-in-out">
+        <Helmet>
+            <title>{lang === 'en' ? 'Dashboard | Sahrul Maulidi' : 'Dasbor | Sahrul Maulidi'}</title>
+            <meta name="description" content={lang === 'en' ? 'Coding statistics and skills dashboard.' : 'Statistik koding dan dasbor keahlian.'} />
+        </Helmet>
+        
         <div className="mb-8">
-             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {lang === 'en' ? 'Dashboard' : 'Dasbor'}
             </h1>
-            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-500 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
                 {lang === 'en' ? (
                   <>Statistical data is fetched <strong>Real-time</strong> from the GitHub API.</>
                 ) : (
@@ -77,7 +94,7 @@ export default function Dashboard({ isDark }) {
             </p>
         </div>
 
-        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-500 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
+        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-300 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className={`md:col-span-1 p-6 rounded-2xl border flex flex-col justify-between relative overflow-hidden

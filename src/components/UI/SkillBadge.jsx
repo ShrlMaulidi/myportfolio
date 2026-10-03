@@ -4,7 +4,7 @@ export default function SkillBadge({ name, icon, color, isDark }) {
       <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${color} p-[1.5px] shadow-sm hover:shadow-md transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:scale-105 relative overflow-hidden`}>
         
         <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-white/20 rounded-full pointer-events-none"></div>
-        <div className={`w-full h-full rounded-full flex items-center justify-center shadow-inner transition-all duration-500 ease-in-out ${isDark ? 'bg-[#18181b]/20 backdrop-blur-sm border border-white/10' : 'bg-white/40 backdrop-blur-sm border border-white/40'}`}>
+        <div className={`w-full h-full rounded-full flex items-center justify-center shadow-inner transition-all duration-300 ease-in-out ${isDark ? 'bg-[#18181b]/20 backdrop-blur-sm border border-white/10' : 'bg-white/40 backdrop-blur-sm border border-white/40'}`}>
            
            {icon ? (
              <img 

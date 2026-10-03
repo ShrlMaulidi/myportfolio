@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { projectsData, skillsData } from '../../data';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage } from "../../context/LanguageContext";
+import { Helmet } from 'react-helmet-async';
+import { useApi } from "../../hooks/useApi";
+import ReactionWidget from "../UI/ReactionWidget";
 
 export default function Projects({ isDark }) {
   const { lang, t } = useLanguage();
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Fetch data dynamically from Laravel Backend
+  const { data: projectsData, loading: loadingProjects, updateData: updateProjectsData } = useApi('projects');
+  const { data: skillsData } = useApi('skills');
 
   useEffect(() => {
     if (selectedProject) {
@@ -55,17 +61,22 @@ export default function Projects({ isDark }) {
   const activeImages = getImages(selectedProject);
 
   return (
-    <div className="mb-10 animate-fade-in-up transition-colors duration-500 ease-in-out">
+    <div className="mb-10 animate-fade-in-up transition-colors duration-300 ease-in-out">
+        <Helmet>
+            <title>{lang === 'en' ? 'Projects | Sahrul Maulidi' : 'Proyek | Sahrul Maulidi'}</title>
+            <meta name="description" content={lang === 'en' ? 'Explore the projects built by Sahrul Maulidi.' : 'Jelajahi proyek-proyek yang telah dibangun oleh Sahrul Maulidi.'} />
+        </Helmet>
+
         <div className="mb-8">
-             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-500 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
+             <h1 className={`text-3xl md:text-4xl font-bold mb-3 tracking-tight transition-colors duration-300 ease-in-out ${isDark ? 'text-white' : 'text-[#18181b]'}`}>
                 {t('proyekTitle')}
             </h1>
-            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-500 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
+            <p className={`text-base md:text-lg leading-relaxed transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
                 {t('proyekDesc')}
             </p>
         </div>
 
-        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-500 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
+        <div className={`h-px w-full my-8 border-dashed border-b transition-colors duration-300 ease-in-out ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projectsData.map((project) => (
@@ -115,7 +126,7 @@ export default function Projects({ isDark }) {
                         </p>
 
                         <div className="flex items-center gap-3 mt-auto flex-wrap">
-                            {project.tech.map((techName, idx) => {
+                            {(project.tech || []).map((techName, idx) => {
                                 const iconPath = getTechIcon(techName);
                                 return (
                                     <div key={idx} className="relative group/tooltip">
@@ -133,6 +144,16 @@ export default function Projects({ isDark }) {
                                 );
                             })}
                         </div>
+                        
+                        <ReactionWidget 
+                          type="project" 
+                          itemId={project.id} 
+                          reactions={project.reactions} 
+                          isDark={isDark} 
+                          onReactUpdate={(id, newReactions) => {
+                            updateProjectsData(projectsData.map(p => p.id === id ? { ...p, reactions: newReactions } : p));
+                          }} 
+                        />
                     </div>
                 </div>
             ))}
@@ -199,7 +220,7 @@ export default function Projects({ isDark }) {
                                 </h2>
 
                                 <div className="flex items-center gap-2 mb-4 flex-wrap">
-                                    {selectedProject.tech.map((techName, idx) => (
+                                    {(selectedProject.tech || []).map((techName, idx) => (
                                         <span key={idx} className={`text-[10px] md:text-xs px-2.5 py-1 rounded-md font-medium border ${isDark ? 'bg-[#27272a] border-gray-700 text-gray-300' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>
                                             {techName}
                                         </span>
