@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import { Helmet } from 'react-helmet-async';
 import { useApi } from '../../hooks/useApi';
@@ -115,38 +116,48 @@ export default function Gallery({ isDark }) {
             </div>
         )}
 
-        {selectedImage && (
-            <div 
-                className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4 animate-fade-in"
-                onClick={() => setSelectedImage(null)} 
-            >
-                <button 
-                    className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
-                    onClick={() => setSelectedImage(null)}
+        <AnimatePresence>
+            {selectedImage && (
+                <motion.div 
+                    key="gallery-modal"
+                    className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setSelectedImage(null)} 
                 >
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+                    <button 
+                        className="absolute top-6 right-6 z-50 text-white/70 hover:text-white transition-colors"
+                        onClick={() => setSelectedImage(null)}
+                    >
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
 
-                <div 
-                    className="max-w-4xl w-full max-h-[90vh] flex flex-col items-center"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <img 
-                        src={selectedImage.src} 
-                        alt={lang === 'en' && selectedImage.captionEn ? selectedImage.captionEn : selectedImage.caption} 
-                        className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
-                    />
-                    <div className="mt-4 text-center">
-                        <span className="px-3 py-1 bg-white/20 text-white text-xs rounded-full mb-2 inline-block backdrop-blur-md">
-                            {getCategoryLabel(selectedImage.category)}
-                        </span>
-                        <p className="text-white text-lg font-medium">
-                            {lang === 'en' && selectedImage.captionEn ? selectedImage.captionEn : selectedImage.caption}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        )}
+                    <motion.div 
+                        className="max-w-4xl w-full max-h-[90vh] flex flex-col items-center z-10"
+                        onClick={(e) => e.stopPropagation()}
+                        initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    >
+                        <img 
+                            src={selectedImage.src} 
+                            alt={lang === 'en' && selectedImage.captionEn ? selectedImage.captionEn : selectedImage.caption} 
+                            className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
+                        />
+                        <div className="mt-4 text-center">
+                            <span className="px-3 py-1 bg-white/20 text-white text-xs rounded-full mb-2 inline-block backdrop-blur-md">
+                                {getCategoryLabel(selectedImage.category)}
+                            </span>
+                            <p className="text-white text-lg font-medium">
+                                {lang === 'en' && selectedImage.captionEn ? selectedImage.captionEn : selectedImage.caption}
+                            </p>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
 
     </div>
   );
