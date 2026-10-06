@@ -6,17 +6,32 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 // Simple in-memory cache to prevent redundant API calls
 const apiCache = new Map();
 
+// Helper to get from sessionStorage or Memory
+const getCachedData = (key) => {
+  if (apiCache.has(key)) return apiCache.get(key);
+  try {
+    const stored = sessionStorage.getItem(`api_${key}`);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      apiCache.set(key, parsed);
+      return parsed;
+    }
+  } catch (e) {}
+  return null;
+};
+
 export function useApi(endpoint, initialData = []) {
-  const [data, setData] = useState(() => apiCache.get(endpoint) || initialData);
-  const [loading, setLoading] = useState(!apiCache.has(endpoint));
+  const [data, setData] = useState(() => getCachedData(endpoint) || initialData);
+  const [loading, setLoading] = useState(!getCachedData(endpoint));
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // If we already have the data in cache, don't fetch again!
-    if (apiCache.has(endpoint)) {
-        setData(apiCache.get(endpoint));
+    const cached = getCachedData(endpoint);
+    if (cached) {
+        setData(cached);
         setLoading(false);
-        return;
+        // We do NOT return here anymore! 
+        // We want to fetch fresh data in the background (Stale-While-Revalidate)
     }
 
     fetch(`${API_URL}/${endpoint}`)
@@ -31,7 +46,7 @@ export function useApi(endpoint, initialData = []) {
             if (url.startsWith('http')) return url;
             if (!url.includes('.')) return url; // Emojis or string keys like "Gmail"
             // Use same logic for storage path
-            const baseUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://127.0.0.1:8000';
+            const baseUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : 'http://127.0.0.1:8000';
             // Remove leading slash to avoid double slash
             const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
             return `${baseUrl}/storage/${cleanUrl}`;
@@ -67,6 +82,7 @@ export function useApi(endpoint, initialData = []) {
         
         // Save to cache
         apiCache.set(endpoint, parsedData);
+        try { sessionStorage.setItem(`api_${endpoint}`, JSON.stringify(parsedData)); } catch(e){}
         
         setData(parsedData);
         setLoading(false);
@@ -82,6 +98,7 @@ export function useApi(endpoint, initialData = []) {
     let resolvedData = typeof newData === 'function' ? newData(data) : newData;
     setData(resolvedData);
     apiCache.set(endpoint, resolvedData);
+    try { sessionStorage.setItem(`api_${endpoint}`, JSON.stringify(resolvedData)); } catch(e){}
   };
 
   return { data, loading, error, updateData };
