@@ -92,6 +92,24 @@ export default function Guestbook({ title, isDark }) {
     e.preventDefault();
     if (!newMessage.trim() || !user) return;
 
+    // --- OPTIMISTIC UI UPDATE ---
+    // Tampilkan pesan di layar secara instan sebelum dikirim ke server
+    const tempId = Date.now();
+    const optimisticMsg = {
+      id: tempId,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      message: newMessage,
+      created_at: new Date().toISOString(),
+      reactions: {}
+    };
+    
+    setMessages(prev => [...prev, optimisticMsg]);
+    const messageToSend = newMessage;
+    setNewMessage(''); // Kosongkan form seketika
+    // ----------------------------
+
     setIsSubmitting(true);
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
@@ -105,20 +123,25 @@ export default function Guestbook({ title, isDark }) {
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          message: newMessage,
+          message: messageToSend,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setMessages([...messages, data]);
-        setNewMessage('');
-        toast.success(lang === 'id' ? 'Pesan terkirim!' : 'Message sent!');
+        // Update pesan sementara (optimistic) dengan data asli dari server
+        setMessages(prev => prev.map(msg => msg.id === tempId ? data : msg));
       } else {
+        // Jika gagal, hapus pesan sementara
+        setMessages(prev => prev.filter(msg => msg.id !== tempId));
+        setNewMessage(messageToSend); // Kembalikan teks ke form
         toast.error('Gagal mengirim pesan');
       }
     } catch (error) {
       console.error('Failed to post message', error);
+      // Jika error jaringan, hapus pesan sementara
+      setMessages(prev => prev.filter(msg => msg.id !== tempId));
+      setNewMessage(messageToSend);
       toast.error('Terjadi kesalahan jaringan');
     } finally {
       setIsSubmitting(false);
