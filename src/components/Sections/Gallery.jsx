@@ -117,7 +117,7 @@ export default function Gallery({ isDark }) {
 
         {selectedImage && (
             <div 
-                className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+                className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4 animate-fade-in"
                 onClick={() => setSelectedImage(null)} 
             >
                 <button 
