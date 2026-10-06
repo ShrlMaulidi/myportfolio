@@ -16,12 +16,17 @@ export default function Projects({ isDark }) {
 
   useEffect(() => {
     if (selectedProject) {
+      // Mencegah halaman bergeser (layout shift/flash) karena hilangnya scrollbar
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
       document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
     }
     return () => {
       document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
     };
   }, [selectedProject]);
 
@@ -162,10 +167,11 @@ export default function Projects({ isDark }) {
         <AnimatePresence>
             {selectedProject && (
                 <motion.div 
+                    key="project-modal"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4"
                 >
                     <div 
                         onClick={closeModal}
