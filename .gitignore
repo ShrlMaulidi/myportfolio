@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 backend_full.zip
 backend_update.zip
+.env
