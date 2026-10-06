@@ -49,6 +49,7 @@ export default function Sidebar({ isDark, setIsDark, mobileMenuOpen, setMobileMe
         "Proyek": "Projects", 
         "Dasbor": "Dashboard", 
         "Galleri": "Gallery", 
+        "Ruang Diskusi": "Guestbook",
         "Kontak": "Contact" 
     };
     return dict[label] || label;
@@ -244,8 +245,13 @@ export default function Sidebar({ isDark, setIsDark, mobileMenuOpen, setMobileMe
                     >
                         <div className="flex items-center gap-3">
                             <svg className={`w-5 h-5 transition-transform duration-300 ease-in-out group-hover:-rotate-12 ${active ? (isDark ? 'text-white' : 'text-gray-900') : (isDark ? 'text-[#71717a] group-hover:text-white' : 'text-[#71717a] group-hover:text-gray-900')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.iconPath}></path></svg>
-                            <span className="text-sm font-medium">
+                            <span className="text-sm font-medium flex items-center gap-2">
                                 {translateNav(item.label)}
+                                {item.label === 'Ruang Diskusi' && (
+                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-500 text-white animate-pulse shadow-sm">
+                                        NEW
+                                    </span>
+                                )}
                             </span>
                         </div>
                         {active && (

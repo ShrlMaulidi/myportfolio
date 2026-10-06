@@ -20,6 +20,17 @@ class GuestbookMessageController extends Controller
             'message' => 'required|string',
         ]);
 
+        // Filter kata-kata kasar / kurang pantas
+        $badWords = ['anjing', 'babi', 'monyet', 'bangsat', 'kontol', 'memek', 'jembut', 'goblok', 'tolol', 'ngentot', 'bajingan', 'kampret', 'tai'];
+        
+        $filteredMessage = $validated['message'];
+        foreach ($badWords as $word) {
+            // Menggunakan regex \b untuk match exact word secara case-insensitive
+            $pattern = '/\b' . preg_quote($word, '/') . '\b/i';
+            $filteredMessage = preg_replace($pattern, '***', $filteredMessage);
+        }
+        $validated['message'] = $filteredMessage;
+
         $message = \App\Models\GuestbookMessage::create($validated);
         return response()->json($message, 201);
     }

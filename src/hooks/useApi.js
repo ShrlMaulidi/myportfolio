@@ -28,11 +28,13 @@ export function useApi(endpoint, initialData = []) {
         // Parse JSON fields if necessary (like tech arrays)
         const fixImageUrl = (url) => {
             if (!url) return url;
-            if (url.startsWith('http') || url.startsWith('/')) return url;
+            if (url.startsWith('http')) return url;
             if (!url.includes('.')) return url; // Emojis or string keys like "Gmail"
             // Use same logic for storage path
             const baseUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://127.0.0.1:8000';
-            return `${baseUrl}/storage/${url}`;
+            // Remove leading slash to avoid double slash
+            const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+            return `${baseUrl}/storage/${cleanUrl}`;
         };
 
         const processItem = (item) => {

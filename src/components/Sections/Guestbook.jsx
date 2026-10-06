@@ -18,9 +18,11 @@ export default function Guestbook({ title, isDark }) {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const fetchMessages = async () => {
+  const fetchMessages = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/guestbook');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+      const response = await fetch(`${API_URL}/guestbook`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
@@ -28,12 +30,19 @@ export default function Guestbook({ title, isDark }) {
     } catch (error) {
       console.error('Failed to fetch messages', error);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchMessages();
+    
+    // Auto-refresh (polling) setiap 5 detik agar realtime tanpa memuat ulang halaman
+    const interval = setInterval(() => {
+      fetchMessages(false);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const scrollToBottom = () => {
@@ -85,7 +94,8 @@ export default function Guestbook({ title, isDark }) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/guestbook', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+      const response = await fetch(`${API_URL}/guestbook`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,7 +157,8 @@ export default function Guestbook({ title, isDark }) {
     setActiveReactId(null);
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/guestbook/${msgId}/react`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+      const response = await fetch(`${API_URL}/guestbook/${msgId}/react`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -243,7 +254,7 @@ export default function Guestbook({ title, isDark }) {
                         onClick={(e) => { e.stopPropagation(); setActiveReactId(activeReactId === msg.id ? null : msg.id); }}
                         className={`w-6 h-6 rounded-full flex items-center justify-center text-xs border transition-colors ${
                           isDark ? 'border-gray-700 hover:bg-gray-800 text-gray-400 hover:text-white' : 'border-gray-300 hover:bg-gray-100 text-gray-500 hover:text-black'
-                        } ${(!msg.reactions || Object.keys(msg.reactions).length === 0) ? 'opacity-0 group-hover:opacity-100 transition-opacity' : ''}`}
+                        }`}
                       >
                         +
                       </button>
