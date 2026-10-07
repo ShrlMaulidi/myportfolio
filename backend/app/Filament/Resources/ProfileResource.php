@@ -53,6 +53,11 @@ class ProfileResource extends Resource
                     ,
                 Forms\Components\TextInput::make('avail_link')
                     ,
+                Forms\Components\FileUpload::make('cv_file')
+                    ->label('CV File (PDF)')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->directory('cv')
+                    ->maxSize(5120),
             ]);
     }
 
