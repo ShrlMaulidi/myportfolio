@@ -8,7 +8,7 @@ class GuestbookMessageController extends Controller
 {
     public function index()
     {
-        return response()->json(\App\Models\GuestbookMessage::orderBy('created_at', 'asc')->get());
+        return response()->json(\App\Models\GuestbookMessage::whereNull('parent_id')->with('replies')->orderBy('created_at', 'asc')->get());
     }
 
     public function store(Request $request)
@@ -18,6 +18,7 @@ class GuestbookMessageController extends Controller
             'email' => 'required|email|max:255',
             'avatar' => 'nullable|string',
             'message' => 'required|string',
+            'parent_id' => 'nullable|exists:guestbook_messages,id'
         ]);
 
         // Filter kata-kata kasar / kurang pantas
