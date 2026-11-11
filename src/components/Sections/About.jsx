@@ -170,15 +170,13 @@ export default function About({ isDark }) {
             </button>
 
             <a 
-                href="/CV/CV.pdf" 
+                href={profileData?.cv_file ? `${(import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '/storage')}/${profileData.cv_file}` : "/CV/CV.pdf"} 
+                download
                 target="_blank" 
                 rel="noopener noreferrer"
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-lg border font-medium text-sm transition-all duration-300 hover:-translate-y-0.5
-                ${isDark 
-                    ? 'border-[#27272a] text-gray-300 hover:bg-[#27272a] hover:text-white' 
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-black'}`}
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-md ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-[#18181b] text-white hover:bg-black'}`}
             >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 {lang === 'en' ? 'Download CV' : 'Unduh CV'}
             </a>
       </div>

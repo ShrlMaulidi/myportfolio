@@ -41,6 +41,16 @@ class ProfileResource extends Resource
                     ,
                 Forms\Components\TextInput::make('jobEn')
                     ,
+                Forms\Components\Textarea::make('bio')
+                    ->label('Deskripsi Beranda (ID)')
+                    ->helperText('Gunakan **teks** untuk menebalkan kata, contoh: **(UI/UX)**')
+                    ->rows(5)
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('bioEn')
+                    ->label('Deskripsi Beranda (EN)')
+                    ->helperText('Use **text** to bold words, e.g. **(UI/UX)**')
+                    ->rows(5)
+                    ->columnSpanFull(),
                 Forms\Components\Toggle::make('isAvailable')
                     ->required(),
                 Forms\Components\TextInput::make('avail_status')

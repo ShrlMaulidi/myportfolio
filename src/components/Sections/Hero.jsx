@@ -1,6 +1,24 @@
 import { useLanguage } from "../../context/LanguageContext";
 import { useApi } from "../../hooks/useApi";
 
+const DEFAULT_BIO = {
+  id: 'Seorang mahasiswa Informatika yang memiliki minat besar dalam dunia teknologi, khususnya desain dan pengembangan perangkat lunak. Saya gemar mengeksplorasi desain antarmuka **(UI/UX)** dan **Coding** untuk menciptakan solusi kreatif yang fungsional. Saya percaya teknologi adalah alat untuk inovasi, dan saya terus mengasah keterampilan untuk berkontribusi di industri IT. Mari terhubung untuk berdiskusi atau berkolaborasi!',
+  en: "An Informatics student with a strong interest in technology, specifically software design and development. I enjoy exploring interface design **(UI/UX)** and **Coding** to create functional and creative solutions. I believe technology is a tool for innovation, and I continuously hone my skills to contribute to the IT industry. Let's connect for discussions or collaborations!",
+};
+
+// Ubah **teks** menjadi teks tebal (tanpa dangerouslySetInnerHTML)
+function renderBio(text, isDark) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith('**') && part.endsWith('**') ? (
+      <span key={i} className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`}>
+        {part.slice(2, -2)}
+      </span>
+    ) : (
+      part
+    )
+  );
+}
+
 export default function Hero({ isDark }) {
   const { lang } = useLanguage();
   const { data: profileData } = useApi('profiles', null);
@@ -16,6 +34,10 @@ export default function Hero({ isDark }) {
         <div className="h-4 bg-gray-200 dark:bg-[#27272a] rounded w-5/6"></div>
     </div>
   );
+
+  const bioText = lang === 'en'
+    ? (profileData.bioEn || profileData.bio || DEFAULT_BIO.en)
+    : (profileData.bio || DEFAULT_BIO.id);
 
   return (
     <div className="mb-10 animate-fade-in-up transition-colors duration-300 ease-in-out">
@@ -39,21 +61,15 @@ export default function Hero({ isDark }) {
         </div>
 
         <p className={`leading-relaxed text-[15px] md:text-base max-w-3xl transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
-            {lang === 'en' ? (
-                <>
-                    An Informatics student with a strong interest in technology, specifically software design and development. I enjoy exploring interface design <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`}>(UI/UX)</span> and <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`}>Coding</span> to create functional and creative solutions. I believe technology is a tool for innovation, and I continuously hone my skills to contribute to the IT industry. Let's connect for discussions or collaborations!
-                </>
-            ) : (
-                <>
-                    Seorang mahasiswa Informatika yang memiliki minat besar dalam dunia teknologi, khususnya desain dan pengembangan perangkat lunak. Saya gemar mengeksplorasi desain antarmuka <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`}>(UI/UX)</span> dan <span className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`}>Coding</span> untuk menciptakan solusi kreatif yang fungsional. Saya percaya teknologi adalah alat untuk inovasi, dan saya terus mengasah keterampilan untuk berkontribusi di industri IT. Mari terhubung untuk berdiskusi atau berkolaborasi!
-                </>
-            )}
+            {renderBio(bioText, isDark)}
         </p>
 
         <div className="mt-8 flex items-center gap-4">
             <a 
-                href="/cv.pdf" 
+                href={profileData.cv_file ? `${(import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '/storage')}/${profileData.cv_file}` : "/CV/CV.pdf"}
                 download
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-md ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-[#18181b] text-white hover:bg-black'}`}
             >
                 <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
