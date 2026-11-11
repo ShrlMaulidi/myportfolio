@@ -2,6 +2,12 @@ import { useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 import { Helmet } from "react-helmet-async";
 import { useApi } from "../../hooks/useApi";
+import { renderParagraphs } from "../../utils/formatText";
+
+const DEFAULT_ABOUT = {
+  id: "Halo! Terima kasih telah mengunjungi situs pribadi saya. Saya **Sahrul Maulidi**, seorang mahasiswa Informatika di **Horizon University Indonesia**. Saya adalah seorang Web Developer dengan minat besar dalam membangun produk perangkat lunak yang berdampak. Stack teknologi saya meliputi teknologi frontend modern seperti **React.js, Tailwind CSS**, serta pengembangan backend menggunakan **Laravel (PHP)**.\n\nSaya menikmati menciptakan solusi yang ramah pengguna dan memiliki performa tinggi. Baik saat membangun antarmuka yang intuitif maupun merancang layanan backend, saya selalu berusaha membawa efisiensi dan kejelasan pada setiap lapisan aplikasi. Saya pembelajar cepat yang tumbuh dalam lingkungan dinamis dan senang menyelesaikan masalah kompleks secara kolaboratif.",
+  en: "Hello! Thank you for visiting my personal website. I am **Sahrul Maulidi**, an Informatics student at **Horizon University Indonesia**. I am a Web Developer with a strong interest in building impactful software products. My tech stack includes modern frontend technologies such as **React.js, Tailwind CSS**, as well as backend development using **Laravel (PHP)**.\n\nI enjoy creating user-friendly and high-performance solutions. Whether building intuitive interfaces or designing backend services, I always strive to bring efficiency and clarity to every layer of the application. I am a fast learner who thrives in dynamic environments and enjoys solving complex problems collaboratively.",
+};
 
 function CareerCard({ job, isDark, lang }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,6 +85,13 @@ export default function About({ isDark }) {
   const { data: careerHistory = [] } = useApi('careers');
   const { data: educationData = [] } = useApi('education');
 
+  const aboutText = lang === 'en'
+    ? (profileData?.aboutEn || profileData?.about || DEFAULT_ABOUT.en)
+    : (profileData?.about || DEFAULT_ABOUT.id);
+  const aboutCaption = lang === 'en'
+    ? (profileData?.about_captionEn || 'A brief introduction about who I am.')
+    : (profileData?.about_caption || 'Perkenalan singkat tentang siapa saya.');
+
   return (
     <div className="animate-fade-in-up transition-colors duration-300 ease-in-out">
       <Helmet>
@@ -91,44 +104,14 @@ export default function About({ isDark }) {
           {lang === 'en' ? 'About' : 'Tentang'}
         </h1>
         <p className={`text-base md:text-lg transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
-          {lang === 'en' ? 'A brief introduction about who I am.' : 'Perkenalan singkat tentang siapa saya.'}
+          {aboutCaption}
         </p>
       </div>
 
       <div className={`w-full border-t border-dashed my-8 transition-colors duration-300 ${isDark ? 'border-[#27272a]' : 'border-gray-300'}`}></div>
       
       <div className={`prose max-w-none text-base md:text-lg leading-relaxed space-y-6 transition-colors duration-300 ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
-        {lang === 'en' ? (
-          <>
-            <p>
-              Hello! Thank you for visiting my personal website. I am <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{profileData?.name}</span>, 
-              an Informatics student at <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Horizon University Indonesia</span>. 
-              I am a Web Developer with a strong interest in building impactful software products. 
-              My tech stack includes modern frontend technologies such as <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>React.js, Tailwind CSS</span>, 
-              as well as backend development using <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Laravel (PHP)</span>.
-            </p>
-            <p>
-              I enjoy creating user-friendly and high-performance solutions. 
-              Whether building intuitive interfaces or designing backend services, I always strive to bring efficiency and clarity to every layer of the application. 
-              I am a fast learner who thrives in dynamic environments and enjoys solving complex problems collaboratively.
-            </p>
-          </>
-        ) : (
-          <>
-            <p>
-              Halo! Terima kasih telah mengunjungi situs pribadi saya. Saya <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{profileData?.name}</span>, 
-              seorang mahasiswa Informatika di <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Horizon University Indonesia</span>. 
-              Saya adalah seorang Web Developer dengan minat besar dalam membangun produk perangkat lunak yang berdampak. 
-              Stack teknologi saya meliputi teknologi frontend modern seperti <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>React.js, Tailwind CSS</span>, 
-              serta pengembangan backend menggunakan <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Laravel (PHP)</span>.
-            </p>
-            <p>
-              Saya menikmati menciptakan solusi yang ramah pengguna dan memiliki performa tinggi. 
-              Baik saat membangun antarmuka yang intuitif maupun merancang layanan backend, saya selalu berusaha membawa efisiensi dan kejelasan pada setiap lapisan aplikasi. 
-              Saya pembelajar cepat yang tumbuh dalam lingkungan dinamis dan senang menyelesaikan masalah kompleks secara kolaboratif.
-            </p>
-          </>
-        )}
+        {renderParagraphs(aboutText, `font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`)}
 
         <div className="pt-6">
             <p className="mb-4">{lang === 'en' ? 'Warm regards,' : 'Salam hangat,'}</p>

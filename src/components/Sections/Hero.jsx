@@ -1,23 +1,11 @@
 import { useLanguage } from "../../context/LanguageContext";
 import { useApi } from "../../hooks/useApi";
+import { renderBold } from "../../utils/formatText";
 
 const DEFAULT_BIO = {
   id: 'Seorang mahasiswa Informatika yang memiliki minat besar dalam dunia teknologi, khususnya desain dan pengembangan perangkat lunak. Saya gemar mengeksplorasi desain antarmuka **(UI/UX)** dan **Coding** untuk menciptakan solusi kreatif yang fungsional. Saya percaya teknologi adalah alat untuk inovasi, dan saya terus mengasah keterampilan untuk berkontribusi di industri IT. Mari terhubung untuk berdiskusi atau berkolaborasi!',
   en: "An Informatics student with a strong interest in technology, specifically software design and development. I enjoy exploring interface design **(UI/UX)** and **Coding** to create functional and creative solutions. I believe technology is a tool for innovation, and I continuously hone my skills to contribute to the IT industry. Let's connect for discussions or collaborations!",
 };
-
-// Ubah **teks** menjadi teks tebal (tanpa dangerouslySetInnerHTML)
-function renderBio(text, isDark) {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith('**') && part.endsWith('**') ? (
-      <span key={i} className={`font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`}>
-        {part.slice(2, -2)}
-      </span>
-    ) : (
-      part
-    )
-  );
-}
 
 export default function Hero({ isDark }) {
   const { lang } = useLanguage();
@@ -61,7 +49,7 @@ export default function Hero({ isDark }) {
         </div>
 
         <p className={`leading-relaxed text-[15px] md:text-base max-w-3xl transition-colors duration-300 ease-in-out ${isDark ? 'text-[#a1a1aa]' : 'text-[#52525b]'}`}>
-            {renderBio(bioText, isDark)}
+            {renderBold(bioText, `font-semibold transition-colors duration-300 ${isDark ? 'text-white' : 'text-black'}`)}
         </p>
 
         <div className="mt-8 flex items-center gap-4">

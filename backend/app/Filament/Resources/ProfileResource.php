@@ -51,6 +51,22 @@ class ProfileResource extends Resource
                     ->helperText('Use **text** to bold words, e.g. **(UI/UX)**')
                     ->rows(5)
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('about_caption')
+                    ->label('Caption Tentang (ID)')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('about_captionEn')
+                    ->label('Caption Tentang (EN)')
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('about')
+                    ->label('Isi Tentang (ID)')
+                    ->helperText('Pisahkan paragraf dengan baris kosong. Gunakan **teks** untuk menebalkan kata.')
+                    ->rows(8)
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('aboutEn')
+                    ->label('Isi Tentang (EN)')
+                    ->helperText('Separate paragraphs with a blank line. Use **text** to bold words.')
+                    ->rows(8)
+                    ->columnSpanFull(),
                 Forms\Components\Toggle::make('isAvailable')
                     ->required(),
                 Forms\Components\TextInput::make('avail_status')
