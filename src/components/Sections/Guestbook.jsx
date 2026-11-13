@@ -4,6 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useApi } from '../../hooks/useApi';
 import toast from 'react-hot-toast';
 import { useGoogleLogin } from '@react-oauth/google';
+import { trackEvent } from "../../utils/analytics";
 
 export default function Guestbook({ title, isDark }) {
   const { lang } = useLanguage();
@@ -143,6 +144,7 @@ export default function Guestbook({ title, isDark }) {
       });
 
       if (response.ok) {
+        trackEvent(parentIdToSend ? 'guestbook-balas' : 'guestbook-pesan');
         const data = await response.json();
         if (parentIdToSend) {
           setMessages(prev => prev.map(msg => {

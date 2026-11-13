@@ -246,6 +246,8 @@ export default function Projects({ isDark }) {
                                 {selectedProject.link ? (
                                     <a 
                                         href={selectedProject.link}
+                                        data-umami-event="kunjungi-proyek"
+                                        data-umami-event-proyek={selectedProject.title}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className={`w-full py-2.5 md:py-3 text-sm rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-1 hover:shadow-lg

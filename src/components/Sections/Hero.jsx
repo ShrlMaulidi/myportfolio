@@ -56,6 +56,8 @@ export default function Hero({ isDark }) {
             <a 
                 href={profileData.cv_file ? `${(import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '/storage')}/${profileData.cv_file}` : "/CV/CV.pdf"}
                 download
+                data-umami-event="download-cv"
+                data-umami-event-from="beranda"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-md ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-[#18181b] text-white hover:bg-black'}`}
